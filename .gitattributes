@@ -1,2 +1,34 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+using System;
+namespace GradeManagement
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int quizSum = 0;
+            double quizAve = 0;
+            Console.WriteLine("-----GRADE SYSTEM-----");
+            Console.WriteLine("How many quizes do you want to encode: ");
+            int numberOfQuizes = int.Parse(Console.ReadLine());
+            int[] quizScore = new int[numberOfQuizes];
+            for(int i = 0; i < quizScore.Length; i++)
+            {
+                Console.WriteLine("Enter quiz score: ");
+                quizScore[i] = int.Parse(Console.ReadLine());
+                quizSum += quizScore[i];
+
+            }
+
+            for(int i = 0; i < quizScore.Length; i++)
+            {
+                Console.WriteLine("Quiz " + (i + 1) + ": " + quizScore[i]);
+            }
+            Console.WriteLine("Enter the total score of all the quizes: ");
+            int totalScore = int.Parse(Console.ReadLine());
+            quizAve = (quizSum / totalScore) * 100;
+            Console.WriteLine("Student quiz average: " + quizAve + "");
+
+            
+        }
+    }
+}
