@@ -5,7 +5,7 @@ namespace GradeManagement
     {
         static void Main(string[] args)
         {
-            double quizSum = 0, totalItems = 0;
+            double quizSum = 0, totalItems = 0, items = 0;
             double quizAve = 0;
             Console.WriteLine("-----GRADE SYSTEM-----");
             Console.WriteLine("Number of quizes you want to encode: ");
@@ -20,7 +20,7 @@ namespace GradeManagement
                     quizScore[i] = int.Parse(Console.ReadLine());
 
                     Console.Write("Total items: ");
-                    double items = double.Parse(Console.ReadLine());
+                    items = double.Parse(Console.ReadLine());
 
                     if (quizScore[i] > items || quizScore[i] < 0)
                     {
@@ -47,6 +47,15 @@ namespace GradeManagement
 
             quizAve = (quizSum / totalItems) * 100;
             Console.WriteLine($"Average (Quiz): {quizAve:F2}%");
+
+
+
+
+
+
+
+
+
 
 
         }
