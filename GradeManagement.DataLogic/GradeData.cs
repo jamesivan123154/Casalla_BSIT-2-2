@@ -1,6 +1,9 @@
-﻿using GradeManagement.Model;
+﻿using Microsoft.Data.SqlClient;
+using GradeManagement.Model;
+using System.IO;
+using System.Text.Json;
 using System;
-using System.Diagnostics;
+
 
 namespace GradeManagement.DataLogic
 {
@@ -34,6 +37,7 @@ namespace GradeManagement.DataLogic
                 {
                     gm.Score.Add(score);
                     gm.TotalItems.Add(total);
+                    
                     break;
                 }
             }
@@ -66,10 +70,62 @@ namespace GradeManagement.DataLogic
                 {
                     gm.Score.Add(score);
                     gm.TotalItems.Add(total);
+                    
                     break;
                 }
             }
             return gm;
         }
+        private string connectionString = "Server=localhost\\SQLEXPRESS;Database=GradeDB;Trusted_Connection=True;TrustServerCertificate=True;";
+        public void SaveFinalGrade(GradeModel gm, double finalGrade)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    string query = @"INSERT INTO FinalGrades(StudentName, SubjectName, FinalGrade)
+                             VALUES(@student, @subject, @grade)";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue("@student", gm.StudentName);
+                    cmd.Parameters.AddWithValue("@subject", gm.SubjectName);
+                    cmd.Parameters.AddWithValue("@grade", finalGrade);
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                Console.WriteLine("\nFinal grade saved to database successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR: " + ex.Message);
+            }
+        }
+        public void SaveToJson(GradeModel gm)
+        {
+            string filePath = "grades.json";
+
+            List<GradeModel> gradesList = new List<GradeModel>();
+
+            
+            if (File.Exists(filePath))
+            {
+                string existingJson = File.ReadAllText(filePath);
+                gradesList = JsonSerializer.Deserialize<List<GradeModel>>(existingJson) ?? new List<GradeModel>();
+            }
+
+            
+            gradesList.Add(gm);
+
+            
+            string jsonString = JsonSerializer.Serialize(gradesList, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(filePath, jsonString);
+
+            Console.WriteLine("\nSaved to JSON file successfully!");
+        }
+
     }
 }

@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="10.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GradeManagement.BusinessLogic\GradeManagement.BusinessLogic.csproj" />
     <ProjectReference Include="..\GradeManagement.DataLogic\GradeManagement.DataLogic.csproj" />
     <ProjectReference Include="..\GradeManagement.Model\GradeManagement.Model.csproj" />

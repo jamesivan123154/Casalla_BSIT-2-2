@@ -10,6 +10,7 @@ namespace GradeManagement
         {
             GradeData data = new GradeData();
             GradeCalculator calc = new GradeCalculator();
+            GradeModel gm = new GradeModel();
 
             Console.WriteLine("-----GRADE SYSTEM-----");
             Console.WriteLine("Quizzes - 10%");
@@ -17,6 +18,12 @@ namespace GradeManagement
             Console.WriteLine("Performance Task - 40%");
             Console.WriteLine("Midterm Exam - 20%");
             Console.WriteLine("Final Exam - 20%");
+
+            Console.WriteLine("\nEnter Student Name: ");
+            gm.StudentName = Console.ReadLine();
+
+            Console.WriteLine("\nEnter Subject Name: ");
+            gm.SubjectName = Console.ReadLine();
 
             //quiz
             GradeModel quiz = data.GetActivityScores("Quiz");
@@ -66,6 +73,12 @@ namespace GradeManagement
 
             string equivalent = calc.GetGradeEquivalent(finalGrade);
             Console.WriteLine($"Equivalent: {equivalent}");
+
+            data.SaveFinalGrade(gm, finalGrade);
+
+            gm.FinalGrade = Math.Round(finalGrade, 2);
+
+            data.SaveToJson(gm);
         }
     }
 }
