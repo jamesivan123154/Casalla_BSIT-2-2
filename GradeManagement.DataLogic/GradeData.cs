@@ -127,5 +127,26 @@ namespace GradeManagement.DataLogic
             Console.WriteLine("\nSaved to JSON file successfully!");
         }
 
+        public void LoadFromJson()
+        {
+            string filePath = "grades.json";
+
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("No data found.");
+                return;
+            }
+
+            string json = File.ReadAllText(filePath);
+            var grades = JsonSerializer.Deserialize<List<GradeModel>>(json);
+
+            Console.WriteLine("\n----- STORED GRADES -----");
+
+            foreach (var g in grades)
+            {
+                Console.WriteLine($"{g.StudentName} | {g.SubjectName} | {g.FinalGrade:F2}%");
+            }
+        }
+
     }
 }

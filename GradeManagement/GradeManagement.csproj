@@ -17,4 +17,9 @@
     <ProjectReference Include="..\GradeManagement.Model\GradeManagement.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Json\" />
+    <Folder Include="sql\" />
+  </ItemGroup>
+
 </Project>
