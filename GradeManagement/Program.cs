@@ -10,62 +10,113 @@ namespace GradeManagement
         {
             GradeData data = new GradeData();
             GradeCalculator calc = new GradeCalculator();
+            GradeModel gm = new GradeModel();
+            EmailService emailService = new EmailService();
 
-            Console.WriteLine("-----GRADE SYSTEM-----");
-            Console.WriteLine("Quizzes - 10%");
-            Console.WriteLine("Assignments - 10%");
-            Console.WriteLine("Performance Task - 40%");
-            Console.WriteLine("Midterm Exam - 20%");
-            Console.WriteLine("Final Exam - 20%");
 
-            //quiz
-            GradeModel quiz = data.GetActivityScores("Quiz");
-            double quizWeighted = calc.ComputeCategory(quiz, 0.10);
+            while (true)
+            {
+                Console.WriteLine("\n===== GRADE MANAGEMENT SYSTEM =====");
+                Console.WriteLine("1. Add Grade");
+                Console.WriteLine("2. View Grades");
+                Console.WriteLine("3. Exit");
+                Console.Write("Choose an option: ");
 
-            //assignment
-            GradeModel assignment = data.GetActivityScores("Assignment");
-            double assWeighted = calc.ComputeCategory(assignment, 0.10);
+                string choice = Console.ReadLine();
 
-            //performace task
-            GradeModel pt = data.GetActivityScores("Performance Task");
-            double ptWeighted = calc.ComputeCategory(pt, 0.40);
+                switch (choice)
+                {
+                    case "1":
+                        Console.WriteLine("-----GRADE SYSTEM-----");
+                        Console.WriteLine("Quizzes - 10%");
+                        Console.WriteLine("Assignments - 10%");
+                        Console.WriteLine("Performance Task - 40%");
+                        Console.WriteLine("Midterm Exam - 20%");
+                        Console.WriteLine("Final Exam - 20%");
 
-            //midterm exam
-            GradeModel midterm = data.GetExamScore("MIDTERM EXAM");
+                        Console.WriteLine("\nEnter Student Name: ");
+                        gm.StudentName = Console.ReadLine();
 
-            Console.WriteLine("\n-----MIDTERM EXAM SCORE-----");
-            Console.WriteLine("Midterm Exam: " + midterm.Score[0] + "/" + midterm.TotalItems[0]);
+                        Console.WriteLine("\nEnter Subject Name: ");
+                        gm.SubjectName = Console.ReadLine();
 
-            double midPercentage = calc.ComputeExamPercentage(midterm);
+                        //quiz
+                        GradeModel quiz = data.GetActivityScores("Quiz");
+                        double quizWeighted = calc.ComputeCategory(quiz, 0.10);
 
-            Console.WriteLine("\n-----RESULT-----");
-            Console.WriteLine($"Midterm Exam Percentage: {midPercentage:F2}%");
+                        //assignment
+                        GradeModel assignment = data.GetActivityScores("Assignment");
+                        double assWeighted = calc.ComputeCategory(assignment, 0.10);
 
-            double midWeighted = calc.ComputeWeighted(midPercentage, .20);
+                        //performace task
+                        GradeModel pt = data.GetActivityScores("Performance Task");
+                        double ptWeighted = calc.ComputeCategory(pt, 0.40);
 
-            Console.WriteLine($"Weighted Midterm Exam (20%): {midWeighted:F2}%");
+                        //midterm exam
+                        GradeModel midterm = data.GetExamScore("MIDTERM EXAM");
 
-            //final exam
-            GradeModel finalExam = data.GetExamScore("FINAL EXAM");
+                        Console.WriteLine("\n-----MIDTERM EXAM SCORE-----");
+                        Console.WriteLine("Midterm Exam: " + midterm.Score[0] + "/" + midterm.TotalItems[0]);
 
-            Console.WriteLine("\n-----FINAL EXAM SCORE-----");
-            Console.WriteLine("Final Exam: " + finalExam.Score[0] + "/" + finalExam.TotalItems[0]);
+                        double midPercentage = calc.ComputeExamPercentage(midterm);
 
-            double finalPercentage = calc.ComputeExamPercentage(finalExam);
+                        Console.WriteLine("\n-----RESULT-----");
+                        Console.WriteLine($"Midterm Exam Percentage: {midPercentage:F2}%");
 
-            Console.WriteLine("\n-----RESULT-----");
-            Console.WriteLine($"Final Exam Percentage: {finalPercentage:F2}%");
+                        double midWeighted = calc.ComputeWeighted(midPercentage, .20);
 
-            double finalWeighted = calc.ComputeWeighted(finalPercentage, .20);
+                        Console.WriteLine($"Weighted Midterm Exam (20%): {midWeighted:F2}%");
 
-            Console.WriteLine($"Weighted Final Exam (20%): {finalWeighted:F2}%");
+                        //final exam
+                        GradeModel finalExam = data.GetExamScore("FINAL EXAM");
 
-            double finalGrade = quizWeighted + assWeighted + ptWeighted + midWeighted + finalWeighted;
-            Console.WriteLine($"\n========== GRADE REPORT ==========");
-            Console.WriteLine($"Final Grade: {finalGrade:F2}%");
+                        Console.WriteLine("\n-----FINAL EXAM SCORE-----");
+                        Console.WriteLine("Final Exam: " + finalExam.Score[0] + "/" + finalExam.TotalItems[0]);
 
-            string equivalent = calc.GetGradeEquivalent(finalGrade);
-            Console.WriteLine($"Equivalent: {equivalent}");
+                        double finalPercentage = calc.ComputeExamPercentage(finalExam);
+
+                        Console.WriteLine("\n-----RESULT-----");
+                        Console.WriteLine($"Final Exam Percentage: {finalPercentage:F2}%");
+
+                        double finalWeighted = calc.ComputeWeighted(finalPercentage, .20);
+
+                        Console.WriteLine($"Weighted Final Exam (20%): {finalWeighted:F2}%");
+
+                        double finalGrade = quizWeighted + assWeighted + ptWeighted + midWeighted + finalWeighted;
+                        Console.WriteLine($"\n========== GRADE REPORT ==========");
+                        Console.WriteLine($"Final Grade: {finalGrade:F2}%");
+
+                        string equivalent = calc.GetGradeEquivalent(finalGrade);
+                        Console.WriteLine($"Equivalent: {equivalent}");
+
+                        data.SaveFinalGrade(gm, finalGrade);
+
+                        gm.FinalGrade = Math.Round(finalGrade, 2);
+
+                        data.SaveToJson(gm);
+
+
+                        emailService.SendEmail(gm.StudentName, gm.SubjectName, gm.FinalGrade, equivalent);
+                        break;
+
+                    case "2":
+                        data.LoadFromJson();
+                        break;
+
+                    case "3":
+                        Console.WriteLine("Exiting program...");
+                        return;
+
+                    default:
+                        Console.WriteLine("Invalid choice. Try again.");
+                        break;
+                }
+            }
+
+
+
+
+            
         }
     }
 }
