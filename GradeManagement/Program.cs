@@ -11,6 +11,7 @@ namespace GradeManagement
             GradeData data = new GradeData();
             GradeCalculator calc = new GradeCalculator();
             GradeModel gm = new GradeModel();
+            EmailService emailService = new EmailService();
 
 
             while (true)
@@ -93,6 +94,9 @@ namespace GradeManagement
                         gm.FinalGrade = Math.Round(finalGrade, 2);
 
                         data.SaveToJson(gm);
+
+
+                        emailService.SendEmail(gm.StudentName, gm.SubjectName, gm.FinalGrade, equivalent);
                         break;
 
                     case "2":

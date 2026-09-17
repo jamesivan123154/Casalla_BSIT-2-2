@@ -148,5 +148,102 @@ namespace GradeManagement.DataLogic
             }
         }
 
+        public void UpdateGrade(int id, GradeModel grade)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                string query = @"
+            UPDATE FinalGrades
+            SET StudentName = @student,
+                SubjectName = @subject,
+                FinalGrade = @grade
+            WHERE Id = @id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.Parameters.AddWithValue("@student", grade.StudentName);
+                cmd.Parameters.AddWithValue("@subject", grade.SubjectName);
+                cmd.Parameters.AddWithValue("@grade", grade.FinalGrade);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteGrade(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                string query = "DELETE FROM FinalGrades WHERE Id = @id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public GradeModel GetGradeById(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                string query = "SELECT * FROM FinalGrades WHERE Id = @id";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@id", id);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    return new GradeModel
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        StudentName = reader["StudentName"].ToString(),
+                        SubjectName = reader["SubjectName"].ToString(),
+                        FinalGrade = Convert.ToDouble(reader["FinalGrade"])
+                    };
+                }
+            }
+
+            return null;
+        }
+
+        public List<GradeModel> GetAllGrades()
+        {
+            List<GradeModel> grades = new List<GradeModel>();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                string query = "SELECT Id, StudentName, SubjectName, FinalGrade FROM FinalGrades";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    grades.Add(new GradeModel
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        StudentName = reader["StudentName"].ToString(),
+                        SubjectName = reader["SubjectName"].ToString(),
+                        FinalGrade = Convert.ToDouble(reader["FinalGrade"])
+                    });
+                }
+            }
+
+            return grades;
+        }
     }
 }
